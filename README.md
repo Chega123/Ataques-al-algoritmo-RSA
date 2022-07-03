@@ -124,6 +124,8 @@ unsigned long long inverso(unsigned long long a, unsigned long long n)
 
 Funciones que usamos para el ejercicio 2 y 3 los cuales estan hechos en python
 
+
+
 ```py
 import random
 def Fermat(a, x, n):
@@ -136,6 +138,7 @@ def Fermat(a, x, n):
     t = Fermat(a, x-1, n)
     c = a%n
     return (t*c)%n
+```
 ```py  
 def EXPMOD(a, x, n):
   c = a % n
@@ -146,6 +149,7 @@ def EXPMOD(a, x, n):
     c = (c * c) % n
     x = int(x/2)
   return r
+```  
 ```py  
 def Es_Compuesto(a, n, t, x):
   x0 = Fermat(a, x, n)
@@ -156,6 +160,7 @@ def Es_Compuesto(a, n, t, x):
     if x0==n-1:
       return False
   return True
+```  
 ```py
 def Miller(n,s):
   t = 0
@@ -168,6 +173,7 @@ def Miller(n,s):
     if Es_Compuesto(a,n,t,u):
       return False
   return True
+```  
 ```py
 def Randombits(b):
   po = 2**b
@@ -176,18 +182,21 @@ def Randombits(b):
   m = pos + 1
   n = n | m
   return n
+```  
 ```py
 def Randomgen(b):
   n = Randombits(b)
   while Miller(n,23) == False:
     n = n+2
   return n
+```  
 ```py
 def Euclides(a, b):
   if b == 0:
     return a
   else:
     return Euclides(b, a%b)
+```   
 ```py
 def Ext_Euclides(a, b):
   if b == 0:
@@ -196,6 +205,7 @@ def Ext_Euclides(a, b):
     d, x_, y_ = Ext_Euclides(b, a%b)
     x, y = y_, x_ - int(a/b)*y_
     return (d, x, y)
+```    
 ```py    
 def inversa(a, n):
   if Euclides(a, n) == 1:
@@ -228,7 +238,19 @@ def Descifrado(c,d,n):
   descifra = Fermat(c,d,n)
   return descifra
 ```
--Ejercicio1
+
+
+
+
+1. (5 points) Si m es el mensaje y c es el cifrado (ambos representados por un entero). Y
+además, la clave pública es P = {e, n} (en ese orden). Hallar m cuando:
+
+```bash
+P = {65537, 999630013489} y c = 747120213790
+```
+
+
+
 
 ```c++
 int main() {
@@ -249,6 +271,107 @@ int main() {
 
 ```bash
     875125425841
+```
+
+
+
+
+2. (7 points) Si m es el mensaje y c es el cifrado (ambos representados por un entero). Y
+además, la clave pública es P = {e, n} (en ese orden). Hallar m cuando:
+```bash
+P ={7, 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516111204504060317568667}
+c =35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516052471686245831933544
+```
+Sin embargo al enviar el mismo mensaje (m) cuando e' = 11, el cifrado resulto ser 
+```bash
+c' =35794234179725868774991807832568455403003778024228226193532908190484670252364665786748759822531352444533388184.
+```
+
+
+
+
+```py
+e1 = 7
+e2 = 11
+n = 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516111204504060317568667
+c1 = 35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516052471686245831933544
+c2 = 35794234179725868774991807832568455403003778024228226193532908190484670252364665786748759822531352444533388184
+
+d1,x1,y1 = Ext_Euclides(e1,e2)
+
+d2,_,__ = Ext_Euclides(c2,n)
+m = 0
+
+if d1==1 and d2==1:
+  c2_inv = inversa(c2, n)
+  m = (EXPMOD(c1,x1,n) * EXPMOD(c2_inv, -1*y1,n)) % n
+  print("m= ",m)
+  print("c= ",EXPMOD(m, e2, n))
+
+if d1==1 and d2==1:
+  c2_inv = inversa(c1, n)
+  m = (EXPMOD(c2,y1,n) * EXPMOD(c2_inv, -1*x1,n)) % n
+  print("m= " ,m)
+  print("c= ",EXPMOD(m, e1, n))
+  
+c_prima = Cifrado(m,e1,n)
+print(c_prima)
+c2_prima= Cifrado(m,e2,n)
+print(c_prima)
+   
+}
+```
+
+```bash
+m=  1
+c=  1
+m=  13827831465063886838020624394233523964302535713793476149786042550018831062823603673726648906292457820275857059
+c=  12075330769265553486706228070090209049486549534898040819491959843250382262086676201906163716195154313826418854
+12075330769265553486706228070090209049486549534898040819491959843250382262086676201906163716195154313826418854
+12075330769265553486706228070090209049486549534898040819491959843250382262086676201906163716195154313826418854
+```
+
+
+
+
+3. (8 points) Validar firmas digitales: Verificar que P(S(m)) = HASH(M) para 3 mensajes
+distintos, mostrando la respectiva firma σ en cada caso. Utilice la Función Hash SHA-1 para
+generar m a través de un texto M ( por ejemplo Hola Mundo). Utilizar b = 32 bits en el
+algoritmo RSA.
+
+
+
+
+```py
+def validar (Palabra) :
+  rsa,_,__ = RSA_KEY_GENERATOR(32)
+  resultado = hashlib.sha1(Palabra.encode())
+  m = int(resultado.hexdigest(), 16)%rsa
+  resultado = hashlib.sha1(Palabra.encode())
+  m_ = int(resultado.hexdigest(), 16)%rsa
+  print (m,"|", m_)
+  if (m==m_):
+    print ("true")
+  else: print("false")
+
+print ("P(S(m))", "|", "HASH(M)" )
+print ("------------------------------------")
+mensaje1 = validar("Hola mundo")
+mensaje2 = validar("Estoy muy cansado")
+mensaje3 = validar("Un punto extra en el final por favor")
+   
+}
+```
+
+```bash
+   P(S(m)) | HASH(M)
+------------------------------------
+1428654992 | 1428654992
+true
+2249693703 | 2249693703
+true
+1752847222 | 1752847222
+true
 ```
 
 
