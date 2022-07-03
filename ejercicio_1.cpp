@@ -120,22 +120,6 @@ unsigned long long RSA_KEY_GENERATOR(int k, unsigned long long& e, unsigned long
     return n;
 
 }
-unsigned long long cifrar(unsigned long long m, unsigned long long e, unsigned long long n) {
-    unsigned long long c = EXPMOD(m, e, n);
-    return c;
-}
-unsigned long long descifrar(unsigned long long c, unsigned long long d, unsigned long long n) {
-    unsigned long long m = EXPMOD(c, d, n);
-    return m;
-}
-
-void TABLA_HORIZONTAL(int k,unsigned long long e,unsigned long long d,unsigned long long n){
-  unsigned long long m = RANDOMGEN_PRIMOS(k);
-  unsigned long long c = cifrar(m,e,n);
-  cout << m << "\t" << c << "\t" << descifrar(c,d,n) << endl;
-}
-
-
 
 int main() {
     int k;
