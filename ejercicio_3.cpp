@@ -82,25 +82,28 @@ def RSA_KEY_GENERATOR(k):
   return (n,e,d)
 
 def Cifrado(m,e,n):
-  P = Fermat(m,e,n)
-  return P
+  cifra = Fermat(m,e,n)
+  return cifra
 
 def Descifrado(c,d,n):
-  S = Fermat(c,d,n)
-  return S
+  descifra = Fermat(c,d,n)
+  return descifra
 
 
  
-def validación_firmas (M) :
+def validar (Palabra) :
   rsa,_,__ = RSA_KEY_GENERATOR(32)
-  result = hashlib.sha1(M.encode())
-  m = int(result.hexdigest(), 16)%rsa
-  result = hashlib.sha1(M.encode())
-  m_ = int(result.hexdigest(), 16)%rsa
+  resultado = hashlib.sha1(Palabra.encode())
+  m = int(resultado.hexdigest(), 16)%rsa
+  resultado = hashlib.sha1(Palabra.encode())
+  m_ = int(resultado.hexdigest(), 16)%rsa
   print (m,"|", m_)
+  if (m==m_):
+    print ("true")
+  else: print("false")
 
 print ("P(S(m))", "|", "HASH(M)" )
-print ("---------------------------------")
-messaje_1 = validación_firmas("Hola mundo")
-messaje_2 = validación_firmas("Estoy muy cansado")
-messaje_2 = validación_firmas("Un punto extra en el final por favor")
+print ("------------------------------------")
+mensaje1 = validar("Hola mundo")
+mensaje2 = validar("Estoy muy cansado")
+mensaje3 = validar("Un punto extra en el final por favor")
